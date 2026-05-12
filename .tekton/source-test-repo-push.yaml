@@ -33,7 +33,7 @@ spec:
       This pipeline is ideal for testing the SLSA e2e flow in KinD.
 
       _Uses `buildah` to create a container image leveraging [trusted artifacts](https://konflux-ci.dev/architecture/ADR/0036-trusted-artifacts.html). It also optionally creates a source image and runs some build-time tests. Information is shared between tasks using OCI artifacts instead of PVCs. EC will pass the [`trusted_task.trusted`](https://conforma.dev/docs/policy/packages/release_trusted_task.html#trusted_task__trusted) policy as long as all data used to build the artifact is generated from trusted tasks.
-      This pipeline is pushed as a Tekton bundle to [quay.io](https://quay.io/konflux-ci/tekton-catalog/pipeline-docker-build-oci-ta?tab=tags)_
+      Based on docker-build-oci-ta with verify-source and trivy-sbom-scan tasks added for SLSA E2E compliance._
     params:
     - description: Source Repository URL
       name: git-url
@@ -186,7 +186,7 @@ spec:
       - name: revision
         value: $(params.revision)
       runAfter:
-      - clone-repository
+      - build-container
       taskRef:
         params:
         - name: name
@@ -359,7 +359,7 @@ spec:
         - name: name
           value: trivy-sbom-scan
         - name: bundle
-          value: quay.io/slsa-konflux-example/task-trivy-sbom-scan:0.1@sha256:af4cf3e6335b80405e8e6fbcdfa0a4d58f63a788ae7130ed8f69938c8dd3c9bc
+          value: quay.io/slsa-konflux-example/task-trivy-sbom-scan:0.1@sha256:a06eb4b7b786b08cacac6a7402be2945d36508916527e49c012923ab1bd99040
         - name: kind
           value: task
         resolver: bundles
